@@ -1,0 +1,39 @@
+# Environment files and sensitive data
+admin/config.php
+
+# Upload directory
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.pdf
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+*.sql.bak
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+
+# Node modules (if using any build tools)
+node_modules/
+package-lock.json
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup
+~*
