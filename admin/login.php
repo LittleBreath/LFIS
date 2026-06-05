@@ -12,20 +12,22 @@ if (isLoggedIn()) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
+    $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     
-    if (empty($username) || empty($password)) {
-        $error = 'Please enter both username and password';
+    if (empty($email) || empty($password)) {
+        $error = 'Please enter both email and password';
     } else {
-        if (verifyAdminLogin($username, $password)) {
+        if (verifyAdminLogin($email, $password)) {
             $_SESSION['admin_id'] = 1;
-            $_SESSION['admin_username'] = ADMIN_USERNAME;
+            $_SESSION['admin_email'] = ADMIN_EMAIL;
+            $_SESSION['admin_username'] = ADMIN_EMAIL;
+            
             $_SESSION['login_time'] = time();
             header("Location: dashboard.php");
             exit();
         } else {
-            $error = 'Invalid username or password';
+            $error = 'Invalid email or password';
         }
     }
 }
@@ -163,10 +165,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="POST" action="">
             <div class="form-group">
-                <label for="username" class="form-label">
-                    <i class="bi bi-person"></i> Username
+                <label for="email" class="form-label">
+                    <i class="bi bi-envelope"></i> Email
                 </label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required autofocus>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required autofocus>
             </div>
 
             <div class="form-group">

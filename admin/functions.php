@@ -12,14 +12,14 @@ require_once 'config.php';
  * Check if user is logged in
  */
 function isLoggedIn() {
-    return isset($_SESSION['admin_id']) && isset($_SESSION['admin_username']);
+    return isset($_SESSION['admin_id']) && isset($_SESSION['admin_email']);
 }
 
 /**
  * Verify admin login credentials
  */
 function verifyAdminLogin($username, $password) {
-    if ($username === ADMIN_USERNAME && password_verify($password, ADMIN_PASSWORD_HASH)) {
+    if ($username === ADMIN_EMAIL && $password === ADMIN_PASSWORD) {
         return true;
     }
     return false;

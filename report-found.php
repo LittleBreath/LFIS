@@ -164,11 +164,11 @@
                                     <input type="text" class="form-control" id="building" name="building" placeholder="e.g., Library, Cafeteria, Parking Lot">
                                 </div>
 
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label for="itemStorage" class="form-label required">Where are you storing it?</label>
                                     <input type="text" class="form-control" id="itemStorage" name="itemStorage" placeholder="e.g., Lost & Found Counter, My Locker" required>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- Contact Information -->
                             <div class="mb-4">
