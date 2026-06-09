@@ -108,7 +108,7 @@ function updateLostReportStatus($conn, $id, $status) {
  * Get all found reports
  */
 function getFoundReports($conn) {
-    $sql = "SELECT * FROM found_reports ORDER BY created_at DESC";
+    $sql = "SELECT *, item_condition AS condition FROM found_reports ORDER BY created_at DESC";
     $result = $conn->query($sql);
     return $result->fetch_all(MYSQLI_ASSOC);
 }
@@ -117,7 +117,7 @@ function getFoundReports($conn) {
  * Get found report by ID
  */
 function getFoundReportById($conn, $id) {
-    $sql = "SELECT * FROM found_reports WHERE id = ?";
+    $sql = "SELECT *, item_condition AS condition FROM found_reports WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -129,18 +129,21 @@ function getFoundReportById($conn, $id) {
  * Add found report
  */
 function addFoundReport($conn, $data) {
-    $sql = "INSERT INTO found_reports (item_name, category, description, date_found, location, building, storage_location, full_name, email, phone, institution, condition, photo, notes, status, created_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
+    if (!empty($data['itemStorage'])) {
+        $data['additionalNotes'] = trim($data['additionalNotes'] . '\nStorage location: ' . $data['itemStorage']);
+    }
+
+    $sql = "INSERT INTO found_reports (item_name, category, description, date_found, location, building, full_name, email, phone, institution, item_condition, photo, notes, status, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssssssss", 
+    $stmt->bind_param("sssssssssssss", 
         $data['itemName'],
         $data['category'],
         $data['description'],
         $data['dateFound'],
         $data['foundLocation'],
         $data['building'],
-        $data['itemStorage'],
         $data['fullName'],
         $data['email'],
         $data['phone'],

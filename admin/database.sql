@@ -141,16 +141,6 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 ('enable_automatic_matching', '1'),
 ('enable_user_registration', '1');
 
--- Sample Data (Optional)
-INSERT INTO lost_reports (item_name, category, description, date_lost, location, building, full_name, email, phone, institution, reward, status) VALUES
-('Black Backpack', 'Bags', 'A black canvas backpack with multiple pockets and padded straps', '2026-05-28', 'Main Campus - Library', 'Library', 'John Ismail', 'john@gmail.com', '+255 654 321 221', 'Jordan University', 50.00, 'pending'),
-('Silver Watch', 'Accessories', 'A silver-colored wristwatch with leather strap', '2026-05-27', 'Luthuri Cafeteria', 'Cafeteria', 'Gian Bhinventure', 'giany@gmail.com', '+255 776 543 210', 'Mzumbe University', 75.00, 'approved'),
-('Blue Umbrella', 'Accessories', 'A blue umbrella with wooden handle', '2026-05-26', 'Main Gate', 'Gate', 'Aziza Mabiki', 'zizah@gmail.com', '+255 614 414 144', 'Sokoine University of Agriculture', 0.00, 'pending');
-
-INSERT INTO found_reports (item_name, category, description, date_found, location, building, full_name, email, phone, institution, item_condition, photo, status) VALUES
-('Dark Bag', 'Bags', 'A dark colored bag found near the library', '2026-05-28', 'Main Campus - Library', 'Library','chrisostom baeda', 'chris12@gmail.com', '+255 789 001 002', 'Jordan University', 'Good', '', 'pending'),
-('Silver Wristwatch', 'Accessories', 'A silver wristwatch found in cafeteria', '2026-05-27', 'Campus Cafeteria', 'Cafeteria', 'Best Brian', 'benga@gmail.com', '+255 677 417 144', 'Mzumbe University', 'Excellent', '', 'approved');
-
 -- Admin default user
 INSERT INTO users (full_name, email, password_hash, status)
 VALUES ('admin', 'admin@lfis.com', MD5('admin123'), 'active');

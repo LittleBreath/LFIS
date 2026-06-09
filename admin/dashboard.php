@@ -5,23 +5,95 @@ require_once 'functions.php';
 
 requireLogin();
 
-// Get statistics
-$stats = array(
-    'total_lost' => 24,
-    'total_found' => 18,
-    'pending_approvals' => 5,
-    'active_matches' => 3,
-    'recovered_items' => 8,
-    'pending_lost' => 4
-);
+// Get live dashboard statistics from the database
+$stats = getDashboardStats($conn);
 
-// Sample data for recent activities
-$recentActivities = array(
-    array('type' => 'lost', 'item' => 'Black Backpack', 'user' => 'John Doe', 'time' => '2 hours ago'),
-    array('type' => 'found', 'item' => 'Silver Watch', 'user' => 'Jane Smith', 'time' => '4 hours ago'),
-    array('type' => 'match', 'item' => 'Red Wallet', 'user' => 'System', 'time' => '6 hours ago'),
-    array('type' => 'recovered', 'item' => 'Blue Umbrella', 'user' => 'Admin', 'time' => '1 day ago'),
-);
+// Get recent activity entries from the database
+$recentActivities = array();
+$recentSql = "(
+        SELECT 'lost' AS type, item_name AS item, full_name AS user, created_at
+        FROM lost_reports
+    )
+    UNION ALL
+    (
+        SELECT 'found' AS type, item_name AS item, full_name AS user, created_at
+        FROM found_reports
+    )
+    UNION ALL
+    (
+        SELECT 'match' AS type, CONCAT('Match for ', fr.item_name) AS item, 'System' AS user, m.created_at
+        FROM matches m
+        JOIN found_reports fr ON m.found_report_id = fr.id
+    )
+    ORDER BY created_at DESC
+    LIMIT 5";
+
+$recentResult = $conn->query($recentSql);
+if ($recentResult) {
+    while ($row = $recentResult->fetch_assoc()) {
+        $recentActivities[] = array(
+            'type' => $row['type'],
+            'item' => $row['item'],
+            'user' => $row['user'],
+            'time' => date('M d, H:i', strtotime($row['created_at']))
+        );
+    }
+}
+
+// Prepare chart data for the last 7 days
+$chartLabels = array();
+$lostChartData = array();
+$foundChartData = array();
+for ($i = 6; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-{$i} days"));
+    $chartLabels[] = date('D', strtotime($date));
+    $lostChartData[$date] = 0;
+    $foundChartData[$date] = 0;
+}
+
+$lostQuery = "SELECT date_lost AS date, COUNT(*) AS count FROM lost_reports WHERE date_lost >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) GROUP BY date_lost";
+$lostResult = $conn->query($lostQuery);
+if ($lostResult) {
+    while ($row = $lostResult->fetch_assoc()) {
+        $date = $row['date'];
+        if (isset($lostChartData[$date])) {
+            $lostChartData[$date] = (int) $row['count'];
+        }
+    }
+}
+
+$foundQuery = "SELECT date_found AS date, COUNT(*) AS count FROM found_reports WHERE date_found >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) GROUP BY date_found";
+$foundResult = $conn->query($foundQuery);
+if ($foundResult) {
+    while ($row = $foundResult->fetch_assoc()) {
+        $date = $row['date'];
+        if (isset($foundChartData[$date])) {
+            $foundChartData[$date] = (int) $row['count'];
+        }
+    }
+}
+
+$chartLabelsJson = json_encode($chartLabels);
+$lostChartDataJson = json_encode(array_values($lostChartData));
+$foundChartDataJson = json_encode(array_values($foundChartData));
+
+// Prepare category chart data from found reports
+$categoryLabels = array();
+$categoryData = array();
+$categoryResult = $conn->query("SELECT category, COUNT(*) AS count FROM found_reports GROUP BY category ORDER BY count DESC");
+if ($categoryResult) {
+    while ($row = $categoryResult->fetch_assoc()) {
+        $categoryLabels[] = $row['category'];
+        $categoryData[] = (int) $row['count'];
+    }
+}
+if (empty($categoryLabels)) {
+    $categoryLabels = array('No Data');
+    $categoryData = array(0);
+}
+
+$categoryLabelsJson = json_encode($categoryLabels);
+$categoryDataJson = json_encode($categoryData);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -457,11 +529,11 @@ $recentActivities = array(
         new Chart(reportsCtx, {
             type: 'line',
             data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                labels: <?php echo $chartLabelsJson; ?>,
                 datasets: [
                     {
                         label: 'Lost Reports',
-                        data: [4, 6, 5, 8, 7, 6, 5],
+                        data: <?php echo $lostChartDataJson; ?>,
                         borderColor: '#dc3545',
                         backgroundColor: 'rgba(220, 53, 69, 0.1)',
                         tension: 0.4,
@@ -471,7 +543,7 @@ $recentActivities = array(
                     },
                     {
                         label: 'Found Reports',
-                        data: [3, 4, 5, 6, 4, 5, 3],
+                        data: <?php echo $foundChartDataJson; ?>,
                         borderColor: '#28a745',
                         backgroundColor: 'rgba(40, 167, 69, 0.1)',
                         tension: 0.4,
@@ -505,16 +577,18 @@ $recentActivities = array(
         new Chart(categoryCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Electronics', 'Accessories', 'Documents', 'Clothing', 'Bags', 'Others'],
+                labels: <?php echo $categoryLabelsJson; ?>,
                 datasets: [{
-                    data: [5, 8, 3, 7, 6, 5],
+                    data: <?php echo $categoryDataJson; ?>,
                     backgroundColor: [
                         '#667eea',
                         '#764ba2',
                         '#f093fb',
                         '#4facfe',
                         '#00f2fe',
-                        '#ffc107'
+                        '#ffc107',
+                        '#fd7e14',
+                        '#20c997'
                     ]
                 }]
             },

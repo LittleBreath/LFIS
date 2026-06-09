@@ -68,7 +68,7 @@ try {
 
         case 'found_by_condition':
             // Get found reports by condition
-            $sql = "SELECT condition, COUNT(*) as count FROM found_reports GROUP BY condition";
+            $sql = "SELECT item_condition AS condition, COUNT(*) as count FROM found_reports GROUP BY item_condition";
             $result = $conn->query($sql);
             $data = $result->fetch_all(MYSQLI_ASSOC);
             echo json_encode(['success' => true, 'data' => $data]);
@@ -88,7 +88,7 @@ try {
             }
             
             if ($type === 'found' || $type === 'all') {
-                $sql = "SELECT 'found' as type, * FROM found_reports WHERE item_name LIKE ? OR description LIKE ? OR full_name LIKE ?";
+                $sql = "SELECT 'found' as type, *, item_condition AS condition FROM found_reports WHERE item_name LIKE ? OR description LIKE ? OR full_name LIKE ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sss", $keyword, $keyword, $keyword);
                 $stmt->execute();

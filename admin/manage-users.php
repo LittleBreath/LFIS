@@ -7,11 +7,11 @@ requireLogin();
 
 // Sample users data
 $users = array(
-    array('id' => 1, 'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '+1-555-0123', 'lost_reports' => 3, 'found_reports' => 0, 'joined' => '2026-01-15', 'status' => 'active'),
-    array('id' => 2, 'name' => 'Jane Smith', 'email' => 'jane@example.com', 'phone' => '+1-555-0124', 'lost_reports' => 1, 'found_reports' => 4, 'joined' => '2026-02-20', 'status' => 'active'),
-    array('id' => 3, 'name' => 'Mike Johnson', 'email' => 'mike@example.com', 'phone' => '+1-555-0125', 'lost_reports' => 2, 'found_reports' => 2, 'joined' => '2026-03-10', 'status' => 'active'),
-    array('id' => 4, 'name' => 'Sarah Wilson', 'email' => 'sarah@example.com', 'phone' => '+1-555-0126', 'lost_reports' => 0, 'found_reports' => 3, 'joined' => '2026-04-05', 'status' => 'inactive'),
-    array('id' => 5, 'name' => 'Alex Chen', 'email' => 'alex@example.com', 'phone' => '+1-555-0127', 'lost_reports' => 4, 'found_reports' => 1, 'joined' => '2026-05-01', 'status' => 'active'),
+    array('id' => 1, 'name' => 'John Doe', 'email' => 'john@gmail.com', 'phone' => '+255 675 435 234', 'lost_reports' => 3, 'found_reports' => 0, 'joined' => '2026-01-15', 'status' => 'active'),
+    array('id' => 2, 'name' => 'Jane Smith', 'email' => 'jane@gmail.com', 'phone' => '+255 666 443 334', 'lost_reports' => 1, 'found_reports' => 4, 'joined' => '2026-02-20', 'status' => 'active'),
+    array('id' => 3, 'name' => 'Mike Johnson', 'email' => 'mike@gmail.com', 'phone' => '+255 644 556 665', 'lost_reports' => 2, 'found_reports' => 2, 'joined' => '2026-03-10', 'status' => 'active'),
+    array('id' => 4, 'name' => 'Sarah Wilson', 'email' => 'sarah@gmail.com', 'phone' => '+255 699 887 667', 'lost_reports' => 0, 'found_reports' => 3, 'joined' => '2026-04-05', 'status' => 'inactive'),
+    array('id' => 5, 'name' => 'Alex Chen', 'email' => 'alex@gmail.com', 'phone' => '+255 766 887 443', 'lost_reports' => 4, 'found_reports' => 1, 'joined' => '2026-05-01', 'status' => 'active'),
 );
 ?>
 <!DOCTYPE html>

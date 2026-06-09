@@ -68,11 +68,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'phone' => $phone,
             'institution' => htmlspecialchars($_POST['institution'] ?? ''),
             'itemCondition' => htmlspecialchars($_POST['itemCondition']),
+            'itemStorage' => htmlspecialchars($_POST['itemStorage'] ?? ''),
             'additionalNotes' => htmlspecialchars($_POST['additionalNotes'] ?? ''),
             'photo' => $photo_url
         );
 
-        // Insert into database (storage_location RESTORED)
+        if (!empty($data['itemStorage'])) {
+            $data['additionalNotes'] = trim($data['additionalNotes'] . '\nStorage location: ' . $data['itemStorage']);
+        }
+
+        // Insert into database using current schema
         $sql = "INSERT INTO found_reports (
                     item_name,
                     category,
@@ -81,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     time_found,
                     location,
                     building,
-                    storage_location,
                     full_name,
                     email,
                     phone,
@@ -92,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     status,
                     created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
 
         $stmt = $conn->prepare($sql);
 
@@ -101,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt->bind_param(
-            "sssssssssssssss",
+            "ssssssssssssss",
             $data['itemName'],
             $data['category'],
             $data['description'],
@@ -109,7 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['timeFound'],
             $data['foundLocation'],
             $data['building'],
-            $data['itemStorage'],
             $data['fullName'],
             $data['email'],
             $data['phone'],
